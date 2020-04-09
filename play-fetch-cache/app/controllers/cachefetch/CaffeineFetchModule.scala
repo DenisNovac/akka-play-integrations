@@ -46,14 +46,16 @@ class CaffeineFetchModule @Inject() (
 case class CaffeineAkkaCache(asyncAkkaCache: AsyncCacheApi, expiration: FiniteDuration)(
     implicit val ec: ExecutionContext,
     implicit val cs: ContextShift[IO]
-) extends DataCache[IO] {
+) extends DataCache[IO] with LazyLogging {
 
   override def lookup[I, A](i: I, data: Data[I, A]): IO[Option[A]] = {
+    logger.debug(s"Searching in cache $i")
     val l = asyncAkkaCache.get(i.toString)
     IO.fromFuture(IO(l))
   }
 
   override def insert[I, A](i: I, v: A, data: Data[I, A]): IO[DataCache[IO]] = {
+    logger.debug(s"Inserting to cache $i")
     val f: Future[Done] = asyncAkkaCache.set(i.toString, v, expiration) // Результат от апи Play вернуть не получится
     this.pure[IO]
   }
