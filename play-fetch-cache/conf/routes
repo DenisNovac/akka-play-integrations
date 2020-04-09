@@ -4,10 +4,9 @@
 # ~~~~
 
 # An example controller showing a sample home page
-POST     /                           controllers.HomeController.index
-GET     /numbers                           controllers.HomeController.getNumbers
-GET     /cached                           controllers.HomeController.getNumbersCached
-GET     /cachedf                           controllers.HomeController.getNumbersCachedFetch
+GET     /       controllers.HomeWithCache.index
+GET     /test       controllers.TestController.test
+
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
