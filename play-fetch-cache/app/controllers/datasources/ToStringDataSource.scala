@@ -18,7 +18,7 @@ class ToStringDataSource[F[_]: Concurrent] extends Data[Int, String] with LazyLo
 
     override def fetch(id: Int): F[Option[String]] =
       for {
-        _ <- CF.delay(logger.info(s"[${Thread.currentThread.getId}] Calculating $id"))
+        _ <- CF.delay(logger.debug(s"[${Thread.currentThread.getId}] Calculating $id"))
         _ <- Concurrent[F].delay(Thread.sleep(100))
       } yield Option(id.toString)
   }

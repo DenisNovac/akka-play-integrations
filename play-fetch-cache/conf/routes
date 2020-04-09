@@ -5,7 +5,10 @@
 
 # An example controller showing a sample home page
 GET     /       controllers.HomeWithCache.index
-GET     /test       controllers.TestController.test
+GET     /test   controllers.TestController.test
+
+POST    /lower  controllers.HomeWithCache.lower
+POST    /testlower    controllers.TestController.testlower
 
 
 # Map static resources from the /public folder to the /assets URL path

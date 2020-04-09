@@ -2,13 +2,13 @@ package controllers
 
 import cats.effect.{ContextShift, IO, Timer}
 import controllers.cachefetch.CaffeineFetchModule
-import controllers.datasources.ToStringDataSource
+import controllers.datasources.{StringToLowerSource, ToStringDataSource}
 import fetch.{Data, DataCache, DataSource, Fetch}
 import javax.inject.{Inject, Singleton}
 import play.api.Logging
 import play.api.mvc.{BaseController, ControllerComponents}
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class HomeWithCache @Inject() (
@@ -36,5 +36,16 @@ class HomeWithCache @Inject() (
     Fetch.run[IO](f2, cache).unsafeRunSync
     Fetch.run[IO](f2, cache).unsafeRunSync
     Ok(r)
+  }
+
+  val lwr: StringToLowerSource[IO]             = new StringToLowerSource[IO]
+  val dataSt: Data[String, String]             = lwr
+  val sourceSt: DataSource[IO, String, String] = lwr.source
+
+  def lower = Action.async(parse.byteString) { implicit request =>
+    val input = request.body.decodeString("UTF-8")
+    val f: Fetch[IO, String] = Fetch(input, sourceSt)
+    val r: String = Fetch.run[IO](f, cache).unsafeRunSync
+    Future(Ok(r))
   }
 }
