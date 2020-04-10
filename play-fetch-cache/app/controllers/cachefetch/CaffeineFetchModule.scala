@@ -50,7 +50,7 @@ case class CaffeineAkkaCache(asyncAkkaCache: AsyncCacheApi, expiration: FiniteDu
 
   override def lookup[I, A](i: I, data: Data[I, A]): IO[Option[A]] = {
     logger.debug(s"Searching in cache $i")
-    val l = asyncAkkaCache.get(i.toString)
+    val l: Future[Option[A]] = asyncAkkaCache.get(i.toString)
     IO.fromFuture(IO(l))
   }
 
